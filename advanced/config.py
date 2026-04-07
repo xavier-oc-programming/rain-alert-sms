@@ -12,7 +12,7 @@ UNITS = "metric"
 RAIN_CODE_THRESHOLD = 700   # OWM codes < 700 indicate precipitation
 
 # Notification channel
-CHANNEL = "sms"             # "sms" or "whatsapp"
+CHANNEL = "whatsapp"        # "sms" or "whatsapp"
 
 # Output / formatting
 TIMESTAMP_FORMAT = "%A, %d %B %Y %H:%M"

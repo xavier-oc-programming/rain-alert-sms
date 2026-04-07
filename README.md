@@ -45,8 +45,8 @@ python advanced/main.py
 | Feature | Original | Advanced |
 |---|---|---|
 | Fetches OWM 12-hour forecast | Yes | Yes |
-| Sends SMS via Twilio | Yes | Yes |
-| Sends WhatsApp via Twilio | No | Yes (set `CHANNEL = "whatsapp"`) |
+| Sends SMS via Twilio | No | Yes (set `CHANNEL = "sms"`) |
+| Sends WhatsApp via Twilio | Yes | Yes (set `CHANNEL = "whatsapp"`) |
 | Credentials via `.env` | Yes | Yes |
 | OOP (fetcher / notifier classes) | No | Yes |
 | All constants in `config.py` | No | Yes |
@@ -64,7 +64,7 @@ python advanced/main.py
 python original/main.py
 ```
 
-Reads credentials from `.env` in the project root, fetches the Madrid forecast, prints each interval's condition code, then sends one SMS.
+Reads credentials from `.env` in the project root, fetches the Madrid forecast, prints each interval's condition code, then sends a WhatsApp message via the Twilio sandbox.
 
 Example output:
 
@@ -81,7 +81,7 @@ Message status: queued
 python advanced/main.py
 ```
 
-Behaviour is identical but structured. Change `CHANNEL` in [advanced/config.py](advanced/config.py) to `"whatsapp"` to switch channels.
+Behaviour is identical but structured. Change `CHANNEL` in [advanced/config.py](advanced/config.py) to `"sms"` to switch to SMS (requires a Twilio phone number).
 
 Example output:
 
@@ -89,7 +89,7 @@ Example output:
   2025-09-11 09:00:00: condition 501
   2025-09-11 12:00:00: condition 800
 
-Channel: SMS
+Channel: WHATSAPP
 Message: [Wednesday, 11 September 2025 09:14] Rain expected in Madrid in the next 12 hours. Bring an umbrella.
 Status:  queued
 ```
@@ -239,7 +239,7 @@ All constants live in [advanced/config.py](advanced/config.py).
 | `FORECAST_INTERVALS` | `4` | Number of 3-hour intervals to fetch (4 = 12 hours) |
 | `UNITS` | `"metric"` | Temperature units (`metric` = °C) |
 | `RAIN_CODE_THRESHOLD` | `700` | OWM codes below this indicate precipitation |
-| `CHANNEL` | `"sms"` | Notification channel: `"sms"` or `"whatsapp"` |
+| `CHANNEL` | `"whatsapp"` | Notification channel: `"sms"` or `"whatsapp"` |
 | `TIMESTAMP_FORMAT` | `"%A, %d %B %Y %H:%M"` | `strftime` format for message timestamps |
 
 ---

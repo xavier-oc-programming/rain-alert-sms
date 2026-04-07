@@ -25,9 +25,11 @@ def main():
         if choice == "1":
             path = HERE / "original" / "main.py"
             subprocess.run([sys.executable, str(path)], cwd=str(path.parent))
+            input("\nPress Enter to return to menu...")
         elif choice == "2":
             path = HERE / "advanced" / "main.py"
             subprocess.run([sys.executable, str(path)], cwd=str(path.parent))
+            input("\nPress Enter to return to menu...")
         elif choice == "q":
             break
         else:

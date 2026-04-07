@@ -12,8 +12,8 @@ OWM_API_KEY = os.getenv("OWM_API_KEY")  # keep secret
 
 ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
 AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
-FROM_NUMBER = os.getenv("TWILIO_FROM")   # Twilio trial number
-TO_NUMBER = os.getenv("TWILIO_TO")       # Verified phone number
+FROM_NUMBER = os.getenv("TWILIO_WHATSAPP_FROM")  # WhatsApp sandbox sender
+TO_NUMBER = os.getenv("TWILIO_WHATSAPP_TO")      # Verified WhatsApp number
 
 # -------------------- GET WEATHER DATA --------------------
 params = {
