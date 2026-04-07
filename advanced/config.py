@@ -16,3 +16,32 @@ CHANNEL = "whatsapp"        # "sms" or "whatsapp"
 
 # Output / formatting
 TIMESTAMP_FORMAT = "%A, %d %B %Y %H:%M"
+
+
+def condition_label(code: int) -> str:
+    """Convert an OWM condition code to a colloquial description."""
+    if code == 800:
+        return "clear skies"
+    if code == 801:
+        return "mostly clear"
+    if code == 802:
+        return "partly cloudy"
+    if 803 <= code <= 804:
+        return "mostly cloudy"
+    if 200 <= code <= 299:
+        return "thunderstorm"
+    if 300 <= code <= 399:
+        return "drizzle"
+    if code == 500:
+        return "light rain"
+    if code == 501:
+        return "moderate rain"
+    if 502 <= code <= 504:
+        return "heavy rain"
+    if 500 <= code <= 599:
+        return "showers"
+    if 600 <= code <= 699:
+        return "snow"
+    if 700 <= code <= 799:
+        return "fog / mist"
+    return f"unknown ({code})"

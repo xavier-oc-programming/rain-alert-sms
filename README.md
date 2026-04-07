@@ -53,6 +53,8 @@ python advanced/main.py
 | Startup credential validation | No | Yes |
 | Configurable city | Hardcoded `Madrid` | `CITY` in `config.py` |
 | Request timeout | No | Yes (20 s) |
+| Colloquial condition labels | No | Yes (`condition_label()` in `config.py`) |
+| GitHub Actions daily schedule | No | Yes (7:00 CET via cron) |
 
 ---
 
@@ -75,6 +77,8 @@ Example output:
 Message status: queued
 ```
 
+> Original prints raw OWM condition codes. Advanced translates them — see below.
+
 ### Advanced
 
 ```bash
@@ -86,8 +90,8 @@ Behaviour is identical but structured. Change `CHANNEL` in [advanced/config.py](
 Example output:
 
 ```
-  2025-09-11 09:00:00: condition 501
-  2025-09-11 12:00:00: condition 800
+  2025-09-11 09:00:00: moderate rain
+  2025-09-11 12:00:00: clear skies
 
 Channel: WHATSAPP
 Message: [Wednesday, 11 September 2025 09:14] Rain expected in Madrid in the next 12 hours. Bring an umbrella.
@@ -144,6 +148,10 @@ Twilio Messages API
 
 **Configurable city.** Change `CITY` in `config.py` to target any city supported by OWM.
 
+**Colloquial condition labels.** `condition_label(code)` in `config.py` maps OWM numeric codes to plain English — `800` becomes `"clear skies"`, `502` becomes `"heavy rain"`, etc. Only the advanced build uses this; original prints raw codes.
+
+**GitHub Actions daily schedule.** `.github/workflows/daily-rain-alert.yml` runs the advanced build automatically every day at 7:00 CET (6:00 UTC). Credentials are read from GitHub repository secrets — no `.env` file needed on the runner. The workflow can also be triggered manually from the Actions tab.
+
 ---
 
 ## 6. Navigation flow
@@ -194,6 +202,10 @@ rain-alert-sms/
 ├── .env.example         # template for required environment variables
 ├── README.md
 │
+├── .github/
+│   └── workflows/
+│       └── daily-rain-alert.yml  # runs advanced build daily at 7:00 CET
+│
 ├── docs/
 │   └── COURSE_NOTES.md  # original exercise description and concepts
 │
@@ -201,7 +213,7 @@ rain-alert-sms/
 │   └── main.py          # verbatim course solution (uses dotenv)
 │
 └── advanced/
-    ├── config.py        # all constants — city, threshold, channel, format
+    ├── config.py        # constants + condition_label() code→text mapping
     ├── fetcher.py       # WeatherFetcher — OWM API calls
     ├── notifier.py      # Notifier — Twilio SMS and WhatsApp
     └── main.py          # orchestrator — wires fetcher → check → notifier
@@ -210,6 +222,12 @@ rain-alert-sms/
 ---
 
 ## 8. Module reference
+
+### `config.py` — functions (advanced/config.py)
+
+| Function | Returns | Description |
+|---|---|---|
+| `condition_label(code)` | `str` | Converts an OWM condition code to a colloquial string (e.g. `502` → `"heavy rain"`, `800` → `"clear skies"`). Falls back to `"unknown (code)"` for unmapped values. |
 
 ### `WeatherFetcher` (advanced/fetcher.py)
 
@@ -319,6 +337,12 @@ Copy `.env.example` to `.env` and fill in your values.
 
 **Console cleared before every valid menu draw, not after invalid input.** The error message "Invalid choice. Try again." stays on screen so the user sees what happened.
 
+**`condition_label()` in `config.py`, not `main.py`.** The mapping from numeric code to human text is configuration, not orchestration logic. Putting it in `config.py` keeps `main.py` clean and makes the labels easy to edit without touching control flow.
+
+**GitHub Actions cron at `0 6 * * *` UTC.** GitHub Actions has no timezone support — all crons run in UTC. `0 6 * * *` equals 7:00 CET (winter, UTC+1). During CEST (summer, UTC+2) it shifts to 8:00 Madrid time. A `workflow_dispatch` trigger is included so the workflow can be run manually at any time from the GitHub UI.
+
+**GitHub Secrets instead of `.env` in CI.** The runner has no `.env` file. `load_dotenv()` is a no-op when the file is absent, and `os.getenv()` reads directly from the environment — which GitHub Actions populates from repository secrets. No code change required to run in CI vs locally.
+
 ---
 
 ## 13. Course context
@@ -327,7 +351,7 @@ Built as Day 35 of [100 Days of Code: The Complete Python Pro Bootcamp](https://
 
 **Concepts covered in the original build:** environment variables, `python-dotenv`, API key authentication, `requests` HTTP calls, JSON parsing, Twilio SDK, OWM weather codes, conditional messaging, `datetime` formatting.
 
-**The advanced build extends into:** OOP class design, separation of concerns (fetcher / notifier), single-source-of-truth config, multi-channel notification, startup validation, request timeouts, `pathlib`.
+**The advanced build extends into:** OOP class design, separation of concerns (fetcher / notifier), single-source-of-truth config, multi-channel notification, startup validation, request timeouts, `pathlib`, colloquial condition labels, GitHub Actions scheduling.
 
 See [docs/COURSE_NOTES.md](docs/COURSE_NOTES.md) for the full concept breakdown.
 

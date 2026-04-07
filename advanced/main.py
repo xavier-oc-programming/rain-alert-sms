@@ -13,6 +13,7 @@ from config import (
     RAIN_CODE_THRESHOLD,
     TIMESTAMP_FORMAT,
     CHANNEL,
+    condition_label,
 )
 from fetcher import WeatherFetcher
 from notifier import Notifier
@@ -45,7 +46,7 @@ will_rain = any(slot["weather"][0]["id"] < RAIN_CODE_THRESHOLD for slot in forec
 
 for slot in forecast:
     code = slot["weather"][0]["id"]
-    print(f"  {slot['dt_txt']}: condition {code}")
+    print(f"  {slot['dt_txt']}: {condition_label(code)}")
 print()
 
 # ── build message ─────────────────────────────────────────────────────────────
