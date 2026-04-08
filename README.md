@@ -6,24 +6,88 @@ Fetches a 12-hour weather forecast and sends an SMS (or WhatsApp) alert via Twil
 
 ## Table of Contents
 
-1. [Quick start](#1-quick-start)
-2. [Builds comparison](#2-builds-comparison)
-3. [Usage](#3-usage)
-4. [Data flow](#4-data-flow)
-5. [Features](#5-features)
-6. [Navigation flow](#6-navigation-flow)
-7. [Architecture](#7-architecture)
-8. [Module reference](#8-module-reference)
-9. [Configuration reference](#9-configuration-reference)
-10. [Data schema](#10-data-schema)
-11. [Environment variables](#11-environment-variables)
-12. [Design decisions](#12-design-decisions)
-13. [Course context](#13-course-context)
-14. [Dependencies](#14-dependencies)
+1. [Prerequisites](#1-prerequisites)
+2. [Quick start](#2-quick-start)
+3. [Builds comparison](#3-builds-comparison)
+4. [Usage](#4-usage)
+5. [Data flow](#5-data-flow)
+6. [Features](#6-features)
+7. [Navigation flow](#7-navigation-flow)
+8. [Architecture](#8-architecture)
+9. [Module reference](#9-module-reference)
+10. [Configuration reference](#10-configuration-reference)
+11. [Data schema](#11-data-schema)
+12. [Environment variables](#12-environment-variables)
+13. [Design decisions](#13-design-decisions)
+14. [Course context](#14-course-context)
+15. [Dependencies](#15-dependencies)
 
 ---
 
-## 1. Quick start
+## 1. Prerequisites
+
+You need accounts on two services before the bot can run. Both have free tiers.
+
+---
+
+### OpenWeatherMap
+
+1. Create a free account at [openweathermap.org](https://openweathermap.org)
+2. After signing in, click your username (top right) → **My API Keys**
+3. A default key is generated automatically — copy it
+4. New keys take **up to 2 hours** to activate
+
+| .env variable | Where to find it |
+|---|---|
+| `OWM_API_KEY` | My API Keys page — the string next to your default key |
+
+---
+
+### Twilio
+
+1. Create a free account at [twilio.com](https://twilio.com)
+2. After signing in, go to the **Console Dashboard** (home page)
+
+**Account credentials** — visible on the dashboard under "Account Info":
+
+| .env variable | Where to find it |
+|---|---|
+| `TWILIO_ACCOUNT_SID` | Dashboard → Account Info → Account SID (starts with `AC`) |
+| `TWILIO_AUTH_TOKEN` | Dashboard → Account Info → Auth Token (click the eye icon to reveal) |
+
+---
+
+#### Option A — SMS (requires a Twilio phone number)
+
+3. Go to **Phone Numbers → Manage → Active Numbers**
+4. If empty, click **Buy a number** (free on a trial account — cost is deducted from your trial balance)
+5. Claim any number with SMS capability
+
+| .env variable | Where to find it |
+|---|---|
+| `TWILIO_FROM` | Active Numbers — the number you just claimed (e.g. `+15204927666`) |
+| `TWILIO_TO` | Your own mobile number in E.164 format (e.g. `+34665151440`) |
+
+> Trial accounts can only send SMS to **verified numbers**. Go to **Verified Caller IDs** to add and verify your number if sends fail.
+
+---
+
+#### Option B — WhatsApp sandbox (no phone number purchase needed)
+
+3. Go to **Messaging → Try it out → Send a WhatsApp message**
+4. On the **Sandbox** tab, follow the "Connect to sandbox" step: send the displayed join keyword (e.g. `join <word>-<word>`) via WhatsApp to `+14155238886`
+5. Once connected, the sandbox can send messages to your number
+
+| .env variable | Where to find it |
+|---|---|
+| `TWILIO_WHATSAPP_FROM` | Always `whatsapp:+14155238886` (the Twilio sandbox number) |
+| `TWILIO_WHATSAPP_TO` | Your WhatsApp number with the `whatsapp:` prefix (e.g. `whatsapp:+34665151440`) |
+
+> The WhatsApp sandbox session expires after ~72 hours of inactivity. Re-send the join keyword to reconnect.
+
+---
+
+## 2. Quick start
 
 ```bash
 pip install -r requirements.txt
@@ -40,7 +104,7 @@ python advanced/main.py
 
 ---
 
-## 2. Builds comparison
+## 3. Builds comparison
 
 | Feature | Original | Advanced |
 |---|---|---|
@@ -58,7 +122,7 @@ python advanced/main.py
 
 ---
 
-## 3. Usage
+## 4. Usage
 
 ### Original
 
@@ -100,7 +164,7 @@ Status:  queued
 
 ---
 
-## 4. Data flow
+## 5. Data flow
 
 ```
 .env
@@ -126,7 +190,7 @@ Twilio Messages API
 
 ---
 
-## 5. Features
+## 6. Features
 
 ### Both builds
 
@@ -154,7 +218,7 @@ Twilio Messages API
 
 ---
 
-## 6. Navigation flow
+## 7. Navigation flow
 
 ### a) Terminal menu tree
 
@@ -190,7 +254,7 @@ Start
 
 ---
 
-## 7. Architecture
+## 8. Architecture
 
 ```
 rain-alert-sms/
@@ -221,7 +285,7 @@ rain-alert-sms/
 
 ---
 
-## 8. Module reference
+## 9. Module reference
 
 ### `config.py` — functions (advanced/config.py)
 
@@ -246,7 +310,7 @@ rain-alert-sms/
 
 ---
 
-## 9. Configuration reference
+## 10. Configuration reference
 
 All constants live in [advanced/config.py](advanced/config.py).
 
@@ -262,7 +326,7 @@ All constants live in [advanced/config.py](advanced/config.py).
 
 ---
 
-## 10. Data schema
+## 11. Data schema
 
 ### OWM forecast response (relevant fields)
 
@@ -299,7 +363,7 @@ or
 
 ---
 
-## 11. Environment variables
+## 12. Environment variables
 
 Copy `.env.example` to `.env` and fill in your values.
 
@@ -315,7 +379,7 @@ Copy `.env.example` to `.env` and fill in your values.
 
 ---
 
-## 12. Design decisions
+## 13. Design decisions
 
 **`config.py` — zero magic numbers.** Every tunable value (`CITY`, `FORECAST_INTERVALS`, `RAIN_CODE_THRESHOLD`, `CHANNEL`) lives in one file. Changing the city or switching channels requires editing one line, not hunting through code.
 
@@ -345,7 +409,7 @@ Copy `.env.example` to `.env` and fill in your values.
 
 ---
 
-## 13. Course context
+## 14. Course context
 
 Built as Day 35 of [100 Days of Code: The Complete Python Pro Bootcamp](https://www.udemy.com/course/100-days-of-code/) by Dr. Angela Yu.
 
@@ -357,7 +421,7 @@ See [docs/COURSE_NOTES.md](docs/COURSE_NOTES.md) for the full concept breakdown.
 
 ---
 
-## 14. Dependencies
+## 15. Dependencies
 
 | Module | Used in | Purpose |
 |---|---|---|
